@@ -7,7 +7,8 @@ import { facts, telHref, whatsappHref } from '../../lib/facts';
  * Address, contact and directions. No embedded Google Map: the iframe pulls
  * in heavy third-party script and hurts the performance gate, and a link to
  * Maps does the same job. The default slot is for directions copy, which must
- * only use distances and times from the brief.
+ * only use distances and times from the brief. Write it as a <dl>, one
+ * <dt> per route ("From the airport"), and it picks up the design's styling.
  */
 interface Props {
   eyebrow?: string;
@@ -19,16 +20,16 @@ const { business: biz } = facts;
 const { address: a } = biz;
 ---
 
-<section class="section-y bg-base-alt">
-  <div class="wrap grid gap-10 lg:grid-cols-2 lg:gap-20">
+<section class="section-y border-t border-line">
+  <div class="wrap grid gap-9 lg:grid-cols-[1.2fr_1fr] lg:gap-[clamp(2.5rem,6vw,6rem)]">
     <div>
       <SectionHeading eyebrow={eyebrow} title={title} />
-      <div class="copy mt-6 text-ink-muted">
+      <div class="copy mt-6 max-w-[52ch] text-ink-muted [&_dd]:mt-0.5 [&_dl]:grid [&_dl]:gap-[1.125rem] [&_dt]:font-semibold [&_dt]:text-ink">
         <slot />
       </div>
     </div>
-    <div class="space-y-6">
-      <address class="not-italic text-lg leading-relaxed">
+    <div class="space-y-6 lg:pt-2">
+      <address class="text-lead not-italic">
         {biz.name}<br />
         {a.street}<br />
         {a.locality}, {a.region} {a.postalCode}

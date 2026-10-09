@@ -8,6 +8,9 @@ import { facts, formatPrice } from '../../lib/facts';
  * Wellness copy is where AI drafts most often overclaim ("detoxifies",
  * "heals"), so treatment descriptions also live in facts, as the client
  * wrote them, not in page copy.
+ *
+ * Heading and lead, the hours as a row of tiles, then one row per treatment
+ * with the duration and price on the right.
  */
 interface Props {
   eyebrow?: string;
@@ -21,24 +24,22 @@ const spa = facts.spa;
 
 {
   spa && (
-    <section class="section-y bg-base-alt">
-      <div class="wrap grid gap-12 lg:grid-cols-[1fr_2fr] lg:gap-20">
-        <div>
-          <SectionHeading eyebrow={eyebrow} title={title} lead={lead} />
-          <div class="mt-8">
-            <HoursList hours={spa.hours} />
-          </div>
+    <section class="section-y">
+      <div class="wrap">
+        <SectionHeading eyebrow={eyebrow} title={title} lead={lead} />
+        <div class="mt-[clamp(2rem,4vw,3.5rem)]">
+          <HoursList hours={spa.hours} />
         </div>
-        <ul class="divide-y divide-line border-y border-line">
+        <ul class="mt-[clamp(3rem,5vw,4rem)] border-t border-line">
           {spa.treatments.map((t) => (
-            <li class="grid gap-2 py-6 sm:grid-cols-[1fr_auto] sm:gap-8">
-              <div>
-                <h3 class="display text-xl">{t.name}</h3>
-                {t.description && <p class="mt-2 text-ink-muted">{t.description}</p>}
+            <li class="flex flex-wrap justify-between gap-x-8 gap-y-2 border-b border-line py-[1.125rem]">
+              <div class="flex-[1_1_min(100%,21.25rem)]">
+                <h3 class="display text-[1.375rem] leading-tight">{t.name}</h3>
+                {t.description && <p class="mt-1 max-w-[52ch] text-ink-muted">{t.description}</p>}
               </div>
-              <p class="tabular-nums sm:text-right">
-                <span class="block">{formatPrice(t.price)}</span>
-                <span class="text-sm text-ink-muted">{t.durationMin} min</span>
+              <p class="mt-1 flex flex-none gap-5 tabular-nums">
+                <span class="text-ink-muted">{t.durationMin} min</span>
+                <span class="font-semibold">{formatPrice(t.price)}</span>
               </p>
             </li>
           ))}

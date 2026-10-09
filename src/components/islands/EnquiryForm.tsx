@@ -16,8 +16,8 @@ interface Props {
 type Status = { state: 'idle' | 'sending' | 'sent' } | { state: 'error'; message: string };
 
 const field =
-  'mt-1 block w-full min-h-11 rounded-card border border-line bg-card px-3 py-2 text-ink aria-[invalid=true]:border-red-700';
-const label = 'text-sm font-medium';
+  'mt-1.5 block w-full min-h-12 rounded-btn border border-line-strong bg-card px-3.5 py-2 text-ink focus:border-brand aria-[invalid=true]:border-red-700';
+const label = 'text-[0.9375rem] font-semibold';
 
 export default function EnquiryForm({ rooms, action = '/api/enquiry', email }: Props) {
   const [status, setStatus] = useState<Status>({ state: 'idle' });
@@ -127,7 +127,7 @@ export default function EnquiryForm({ rooms, action = '/api/enquiry', email }: P
         <button
           type="submit"
           disabled={status.state === 'sending'}
-          className="inline-flex min-h-11 items-center rounded-btn bg-brand px-6 text-sm font-medium text-onaccent hover:bg-brand-hover disabled:opacity-60"
+          className="inline-flex min-h-[3.25rem] items-center rounded-btn bg-brand px-7 text-base font-semibold text-onaccent hover:bg-brand-hover disabled:opacity-60"
         >
           {status.state === 'sending' ? 'Sending…' : 'Send enquiry'}
         </button>
