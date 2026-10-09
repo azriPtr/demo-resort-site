@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import RoomList from '../components/sections/RoomList.astro';
+import Faq from '../components/sections/Faq.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { facts } from '../lib/facts';
+import { clientImage } from '../lib/images';
+import { headerCta, pages } from '../lib/pages';
+import { faqNode, roomOffers } from '../lib/schema';
+
+const page = pages.rooms;
+// Questions about the stay itself. Getting here and enquiries are answered on the contact page.
+const stayFaq = facts.faq.filter((f) => /check-in|breakfast|children|pet/i.test(f.q));
+const lead = facts.rooms
+  .map((r) => `${r.name}: ${r.features.join(', ').toLowerCase()}, sleeps ${r.maxGuests}.`)
+  .join(' ');
+---
+
+<BaseLayout
+  page={page}
+  breadcrumbs={[{ name: page.nav, path: page.path }]}
+  business={roomOffers()}
+  jsonLd={[faqNode(stayFaq)]}
+>
+  <Hero
+    layout="stacked"
+    image={clientImage(facts.business.image.src)}
+    alt={facts.business.image.alt}
+    eyebrow="Villas"
+    title="Our villas in Ubud"
+    lead={lead}
+  />
+
+  <RoomList
+    title="Sizes, beds and prices"
+    lead="Prices are per night and include breakfast."
+    enquireLabel="Enquire"
+    enquireHref={(r) => `${pages.contact.path}?room=${r.id}#enquire`}
+  />
+
+  <Faq eyebrow="Before you book" title="Questions about your stay" items={stayFaq} />
+
+  <CtaBand
+    title="Ask about your dates"
+    text={facts.faq.find((f) => f.q.startsWith('How quickly'))!.a}
+    cta={headerCta}
+  />
+</BaseLayout>

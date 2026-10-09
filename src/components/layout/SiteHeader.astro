@@ -4,25 +4,36 @@ import { facts } from '../../lib/facts';
 import { headerCta, navItems } from '../../lib/pages';
 
 /**
- * Header with the nav from src/lib/pages.ts. The mobile menu is a <details>
- * element, so it opens without JavaScript and works with a keyboard.
+ * Header with the nav from src/lib/pages.ts. One nav for every width: a row
+ * beside the logo from 900px, a second row under it below that, scrolling
+ * sideways if the labels do not fit. No menu toggle, so no JavaScript.
  */
 const current = Astro.url.pathname.replace(/\.html$/, '').replace(/(.)\/$/, '$1') || '/';
 ---
 
-<header class="relative border-b border-line bg-base">
-  <div class="wrap flex min-h-16 items-center justify-between gap-6">
-    <a href="/" class="display text-xl">{facts.business.name}</a>
+<header class="border-b border-line bg-base">
+  <div class="wrap flex flex-wrap items-center justify-between gap-x-10 min-[56.25rem]:flex-nowrap">
+    <a href="/" class="display flex min-h-16 items-center text-2xl leading-none min-[56.25rem]:mr-auto min-[56.25rem]:min-h-20 min-[56.25rem]:text-[1.6875rem]">
+      {facts.business.name}
+    </a>
 
-    <nav aria-label="Main" class="hidden md:block">
-      <ul class="flex items-center gap-7 text-sm">
+    <Button
+      href={headerCta.href}
+      label={headerCta.label}
+      external={headerCta.external}
+      size="sm"
+      class="min-[56.25rem]:order-last min-[56.25rem]:min-h-12 min-[56.25rem]:px-6"
+    />
+
+    <nav aria-label="Main" class="-mx-[clamp(1.25rem,5vw,4.5rem)] w-[calc(100%+2*clamp(1.25rem,5vw,4.5rem))] overflow-x-auto px-[clamp(1.25rem,5vw,4.5rem)] min-[56.25rem]:mx-0 min-[56.25rem]:w-auto min-[56.25rem]:overflow-visible min-[56.25rem]:px-0">
+      <ul class="flex gap-[1.375rem] text-[0.9375rem] min-[56.25rem]:gap-[1.875rem]">
         {
           navItems.map((item) => (
-            <li>
+            <li class="flex-none">
               <a
                 href={item.path}
                 aria-current={current === item.path ? 'page' : undefined}
-                class="underline-offset-8 hover:underline aria-[current=page]:underline"
+                class="flex min-h-11 items-center border-b-2 border-transparent hover:text-brand aria-[current=page]:border-brand"
               >
                 {item.nav}
               </a>
@@ -31,36 +42,5 @@ const current = Astro.url.pathname.replace(/\.html$/, '').replace(/(.)\/$/, '$1'
         }
       </ul>
     </nav>
-
-    <div class="hidden md:block">
-      <Button href={headerCta.href} label={headerCta.label} external={headerCta.external} />
-    </div>
-
-    <details class="group md:hidden">
-      <summary class="flex min-h-11 cursor-pointer list-none items-center text-sm font-medium [&::-webkit-details-marker]:hidden">
-        <span class="group-open:hidden">Menu</span>
-        <span class="hidden group-open:inline">Close</span>
-      </summary>
-      <nav aria-label="Main" class="absolute inset-x-0 top-16 z-40 border-b border-line bg-base">
-        <ul class="wrap flex flex-col gap-1 py-4">
-          {
-            navItems.map((item) => (
-              <li>
-                <a
-                  href={item.path}
-                  aria-current={current === item.path ? 'page' : undefined}
-                  class="flex min-h-11 items-center text-lg"
-                >
-                  {item.nav}
-                </a>
-              </li>
-            ))
-          }
-          <li class="pt-3">
-            <Button href={headerCta.href} label={headerCta.label} external={headerCta.external} class="w-full" />
-          </li>
-        </ul>
-      </nav>
-    </details>
   </div>
 </header>

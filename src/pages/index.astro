@@ -3,14 +3,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/sections/Hero.astro';
 import Intro from '../components/sections/Intro.astro';
 import RoomList from '../components/sections/RoomList.astro';
-import CtaBand from '../components/sections/CtaBand.astro';
+import SplitFeature from '../components/sections/SplitFeature.astro';
+import Gallery from '../components/sections/Gallery.astro';
 import Location from '../components/sections/Location.astro';
-import { facts } from '../lib/facts';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { facts, formatDays, type Hours } from '../lib/facts';
 import { clientImage } from '../lib/images';
 import { headerCta, pages } from '../lib/pages';
 
-// Example home for the kit's placeholder client. /build-from-brief replaces this page.
-const { business: biz } = facts;
+const { business: biz, dining, spa } = facts;
+const faqAnswer = (start: string) => facts.faq.find((f) => f.q.startsWith(start))!.a;
+const transfer = biz.amenities.find((a) => a.startsWith('Airport transfer'));
+const massage = spa?.treatments.find((t) => t.name === 'Balinese massage');
+const yoga =biz.amenities.find((a) => a.startsWith('Yoga'));
+const hours = (h: Hours) => {
+  const days = formatDays(h.days);
+  return `${days === 'Daily' ? 'every day' : days} from ${h.opens} to ${h.closes}`;
+};
 ---
 
 <BaseLayout page={pages.home}>
@@ -18,23 +27,103 @@ const { business: biz } = facts;
     image={clientImage(biz.image.src)}
     alt={biz.image.alt}
     eyebrow={`${biz.address.locality}, ${biz.address.region}`}
-    title="Placeholder headline for the example client"
-    lead="The kit's example home page. Run /build-from-brief to replace it with the client's pages."
+    title="Quiet villas, good food and the rice fields"
+    lead={biz.description}
     primary={headerCta}
+    secondary={{ label: 'See the villas', href: pages.rooms.path }}
   />
+
   <Intro
     eyebrow="About"
-    title="Placeholder introduction"
+    title="A small resort for couples and small families"
     keyFacts={[
-      { label: 'Villas', value: String(facts.rooms.length) },
-      { label: 'Check-in', value: biz.checkIn ?? 'Ask us' },
+      { label: 'Villa types', value: String(facts.rooms.length) },
+      { label: 'Check-out until', value: biz.checkOut! },
     ]}
   >
-    <p>{biz.description}</p>
+    <p>{biz.name} is for couples and small families who want quiet, good food and the rice fields, not party Bali.</p>
+    {yoga && <p>{yoga}.</p>}
   </Intro>
-  <RoomList eyebrow="Stay" title="Placeholder room heading" enquireHref={() => headerCta.href} />
-  <CtaBand title="Placeholder call to action" cta={headerCta} />
-  <Location eyebrow="Find us" title="Placeholder location heading">
-    <p>Directions copy goes here, using only distances from the brief.</p>
+
+  <RoomList
+    eyebrow="Villas"
+    title="Which villa fits you"
+    lead="Prices are per night, with breakfast."
+    layout="cards"
+    cardHref={(r) => `${pages.rooms.path}#${r.id}`}
+    more={{ label: 'Compare all villas', href: pages.rooms.path }}
+  />
+
+  {
+    dining && (
+      <SplitFeature
+        image={clientImage('dining/restaurant.jpg')}
+        alt="Open-sided dining room with rattan chairs, wooden tables and woven pendant lamps, plants all around"
+        eyebrow="Restaurant"
+        title={dining.name}
+        cta={{ label: 'See the menu', href: pages.dining.path }}
+        tone="alt"
+      >
+        <p>
+          {dining.cuisine.join(' and ')} food, {dining.hours.map(hours).join('; ')}.
+        </p>
+        <p>{faqAnswer('Can non-guests')}</p>
+      </SplitFeature>
+    )
+  }
+
+  {
+    spa && (
+      <SplitFeature
+        image={clientImage('spa/massage.jpg')}
+        alt="A therapist's oiled hands massaging a guest's foot and calf on a pale pink sheet"
+        eyebrow="Spa"
+        title={spa.name}
+        cta={{ label: 'See treatments and prices', href: pages.spa.path }}
+        reverse
+      >
+        {massage?.description && <p>{massage.name}: {massage.description.toLowerCase()}</p>}
+        <p>
+          {spa.treatments.length} treatments, open {spa.hours.map(hours).join('; ')}.
+        </p>
+      </SplitFeature>
+    )
+  }
+
+  <Gallery
+    images={[
+      {
+        image: clientImage('location/rice-field.jpg'),
+        alt: 'Terraced green rice fields under coconut palms and a cloudy sky',
+      },
+      {
+        image: clientImage('gallery/villa-pool.jpg'),
+        alt: 'Small pool beside a wooden deck with two sun loungers, in front of thatched roofs and a garden',
+      },
+      {
+        image: clientImage('dining/plate.jpg'),
+        alt: 'A plate of rice with sambal, egg, crackers, cucumber and fried peanuts',
+      },
+      ...facts.rooms.slice(0, 2).map((r) => ({ image: clientImage(r.image.src), alt: r.image.alt })),
+    ]}
+  />
+
+  <Location eyebrow="Find us" title={`Getting to ${biz.name}`}>
+    <dl>
+      <div>
+        <dt>Ubud centre and the airport</dt>
+        <dd>{faqAnswer('How far')}</dd>
+      </div>
+      {
+        transfer && (
+          <div>
+            <dt>Airport transfer</dt>
+            <dd>{transfer.replace(/^Airport transfer /, '').replace(/^./, (c) => c.toUpperCase())}.</dd>
+          </div>
+        )
+      }
+    </dl>
   </Location>
+
+  <CtaBand title="Tell us your dates" text={faqAnswer('How quickly')} cta={headerCta} />
 </BaseLayout>
