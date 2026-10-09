@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import Enquiry from '../components/sections/Enquiry.astro';
+import Location from '../components/sections/Location.astro';
+import Faq from '../components/sections/Faq.astro';
+import { facts } from '../lib/facts';
+import { clientImage } from '../lib/images';
+import { pages } from '../lib/pages';
+import { faqNode } from '../lib/schema';
+
+const page = pages.contact;
+const { business: biz } = facts;
+const faqAnswer = (start: string) => facts.faq.find((f) => f.q.startsWith(start))!.a;
+const transfer = biz.amenities.find((a) => a.startsWith('Airport transfer'));
+// Getting here and enquiries. Questions about the stay are answered on the villas page.
+const contactFaq = facts.faq.filter((f) => /how far|transfer|non-guests|how quickly/i.test(f.q));
+---
+
+<BaseLayout page={page} breadcrumbs={[{ name: page.nav, path: page.path }]} jsonLd={[faqNode(contactFaq)]}>
+  <Hero
+    layout="stacked"
+    image={clientImage('location/rice-field.jpg')}
+    alt="Terraced green rice fields under coconut palms and a cloudy sky"
+    eyebrow="Contact"
+    title="Send us an enquiry"
+    lead={faqAnswer('How quickly')}
+  />
+
+  <Enquiry
+    eyebrow="Enquiry"
+    title="Your dates and villa"
+    lead="Tell us when you want to come, how many of you there are and which villa you have in mind."
+  />
+
+  <Location eyebrow="Find us" title="Where we are">
+    <dl>
+      <div>
+        <dt>Ubud centre and the airport</dt>
+        <dd>{faqAnswer('How far')}</dd>
+      </div>
+      {
+        transfer && (
+          <div>
+            <dt>Airport transfer</dt>
+            <dd>{transfer.replace(/^Airport transfer /, '').replace(/^./, (c) => c.toUpperCase())}.</dd>
+          </div>
+        )
+      }
+    </dl>
+  </Location>
+
+  <Faq eyebrow="Questions" title="Getting here and getting in touch" items={contactFaq} />
+</BaseLayout>

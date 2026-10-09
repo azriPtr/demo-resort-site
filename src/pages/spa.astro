@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import TreatmentList from '../components/sections/TreatmentList.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { facts, telHref } from '../lib/facts';
+import { clientImage } from '../lib/images';
+import { pages } from '../lib/pages';
+import { spaNode } from '../lib/schema';
+
+const page = pages.spa;
+const spa = facts.spa!;
+const durations = spa.treatments.map((t) => t.durationMin);
+const massage = spa.treatments.find((t) => t.name === 'Balinese massage')!;
+---
+
+<BaseLayout page={page} breadcrumbs={[{ name: page.nav, path: page.path }]} jsonLd={[spaNode()]}>
+  <Hero
+    layout="stacked"
+    image={clientImage('spa/massage.jpg')}
+    alt="A therapist's oiled hands massaging a guest's foot and calf on a pale pink sheet"
+    eyebrow={spa.name}
+    title="Balinese massage in Ubud"
+    lead={`The ${massage.name} is ${massage.durationMin} minutes of ${(massage.description ?? 'massage').toLowerCase().replace(/\.$/, '')}. ${spa.treatments.length} treatments in all, from ${Math.min(...durations)} to ${Math.max(...durations)} minutes.`}
+  />
+
+  <TreatmentList eyebrow="Treatments" title="Treatments and prices" />
+
+  <CtaBand
+    title={`Questions about ${spa.name}?`}
+    text={`Call us on ${facts.business.phone}.`}
+    cta={{ label: 'Call us', href: telHref(facts.business.phone) }}
+  />
+</BaseLayout>
