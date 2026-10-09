@@ -12,7 +12,7 @@
 # - Prices are whole numbers in business.currency.
 # - Image paths are relative to src/assets/client/. Alt text describes the photo.
 #
-# Source: client/notes/2026-10-09-owner-email.md and 2026-10-09-pm-notes.md.
+# Source: client/notes/ (owner email, PM notes, owner reply of 9 October).
 
 site:
   url: https://demo-resort.zrior.tech
@@ -35,8 +35,10 @@ business:
     region: Bali
     postalCode: "80571"
     country: ID
-  geo: TODO
-  mapUrl: TODO
+  geo:
+    lat: -8.5069
+    lng: 115.2625
+  mapUrl: https://maps.google.com/?q=-8.5069,115.2625
   currency: IDR
   checkIn: "14:00"
   checkOut: "12:00"
@@ -128,7 +130,8 @@ spa:
       description: Warm scrub of rice, ginger and cloves.
     - name: Flower bath
       durationMin: 30
-      price: TODO
+      price: 250000
+      description: A warm bath with frangipani and rose petals.
     - name: Four hands massage
       durationMin: 90
       price: 950000
@@ -136,7 +139,7 @@ spa:
 
 faq:
   - q: What time is check-in and check-out?
-    a: Check-in is from 14:00 and check-out is until 12:00. TODO confirm the Sunday exception (client wrote 15:00 on Sundays).
+    a: Check-in is from 14:00, and from 15:00 on Sundays. Check-out is until 12:00.
   - q: Is breakfast included?
     a: Yes, breakfast is included for all villas.
   - q: Are children welcome?
