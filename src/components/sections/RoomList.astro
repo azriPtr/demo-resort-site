@@ -4,6 +4,7 @@ import Button from '../ui/Button.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 import { facts, formatPrice, type Room } from '../../lib/facts';
 import { clientImage } from '../../lib/images';
+import { pages, type PageMeta } from '../../lib/pages';
 
 /**
  * Room types from client/facts.yaml. Size, bed, occupancy, features and price
@@ -12,7 +13,7 @@ import { clientImage } from '../../lib/images';
  *
  * - `rows` (rooms page): one room per row, photo beside the specs, feature
  *   tags, price and an enquiry button. Each room gets an id anchor, so
- *   /rooms#pool-villa links straight to it.
+ *   <rooms page>#pool-villa links straight to it.
  * - `cards` (home and other teasers): a grid of photo cards whose names link
  *   to `cardHref`, with an optional link to all rooms beside the heading.
  */
@@ -25,11 +26,14 @@ interface Props {
   /** Where "Enquire" goes for a room. Defaults to the contact page with the room preselected. */
   enquireHref?: (room: Room) => string;
   enquireLabel?: string;
-  /** `cards` only: where a card's name links. Defaults to the room's anchor on /rooms. */
+  /** `cards` only: where a card's name links. Defaults to the room's anchor on the page registered as `rooms` in pages.ts. */
   cardHref?: (room: Room) => string;
   /** `cards` only: a link beside the heading, e.g. to the rooms page. */
   more?: { label: string; href: string };
 }
+
+// The rooms page path comes from the registry, so renaming the page (/rooms to /villas) cannot break these links.
+const roomsPath = (pages as Record<string, PageMeta>).rooms?.path ?? '/';
 
 const {
   eyebrow,
@@ -39,7 +43,7 @@ const {
   layout = 'rows',
   enquireHref = (r: Room) => `/contact?room=${r.id}`,
   enquireLabel = 'Enquire',
-  cardHref = (r: Room) => `/rooms#${r.id}`,
+  cardHref = (r: Room) => `${roomsPath}#${r.id}`,
   more,
 } = Astro.props;
 ---
