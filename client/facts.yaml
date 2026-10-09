@@ -12,71 +12,80 @@
 # - Prices are whole numbers in business.currency.
 # - Image paths are relative to src/assets/client/. Alt text describes the photo.
 #
-# This file is the kit's example client. /intake replaces it for a real client.
+# Source: client/notes/2026-10-09-owner-email.md and 2026-10-09-pm-notes.md.
 
 site:
-  url: https://example.com
+  url: https://demo-resort.zrior.tech
   language: en
   ogLocale: en_US
-  aiCrawlers: allow
+  aiCrawlers: search-only
+  notice: Demo Resort is fictional. This site demonstrates an agency workflow; nothing here can be booked.
 
 business:
-  name: Example Resort
+  name: Demo Resort
   type: Resort
   description: >-
-    Example Resort is placeholder data for the agency site kit: twelve villas, a
-    restaurant and a spa. Replace this file with the client's confirmed facts.
+    Demo Resort is a small resort in Ubud, Bali, with 11 villas, a Balinese and
+    Indonesian restaurant and a spa. Breakfast is included with every villa.
   phone: +62 361 000 000
-  whatsapp: +62 812 0000 0000
-  email: hello@example.com
+  email: demo-resort@zrior.tech
   address:
-    street: Jl. Example No. 1
+    street: Jl. Raya Ubud
     locality: Ubud
     region: Bali
     postalCode: "80571"
     country: ID
-  geo:
-    lat: -8.5069
-    lng: 115.2625
-  mapUrl: https://maps.google.com/?q=-8.5069,115.2625
+  geo: TODO
+  mapUrl: TODO
   currency: IDR
-  priceRange: $$$
   checkIn: "14:00"
   checkOut: "12:00"
   amenities:
+    - Breakfast included
     - Outdoor pool
     - Free Wi-Fi
-    - Airport transfer on request
+    - Yoga deck with a free class every morning at 07:00
+    - Airport transfer on request, IDR 450,000 each way
   sameAs: []
   image:
-    src: example/hero.jpg
-    alt: Placeholder photo standing in for the resort's main view
+    src: hero.jpg
+    alt: Shaded terrace with a sofa, looking out over rice fields and palm trees
 
 rooms:
   - id: garden-villa
     name: Garden Villa
-    sizeSqm: 60
+    sizeSqm: 55
     bed: King
     maxGuests: 2
-    priceFrom: 2500000
-    features: [Private terrace, Outdoor shower]
+    priceFrom: 2900000
+    features: [Outdoor shower, Terrace facing the garden]
     image:
-      src: example/room-1.jpg
-      alt: Placeholder photo standing in for the Garden Villa
-  - id: pool-villa
-    name: Pool Villa
-    sizeSqm: 95
+      src: rooms/garden-villa.jpg
+      alt: Bedroom with a white canopy bed under a high timber ceiling and a ceiling fan
+  - id: rice-field-villa
+    name: Rice Field Villa
+    sizeSqm: 70
     bed: King
-    maxGuests: 3
-    priceFrom: 4200000
-    features: [Private pool, Daybed]
+    maxGuests: 2
+    priceFrom: 3800000
+    features: [Plunge pool, Bedroom window facing the rice field]
     image:
-      src: example/room-2.jpg
-      alt: Placeholder photo standing in for the Pool Villa
+      src: rooms/rice-field-villa.jpg
+      alt: Dim sitting room with an armchair and a window onto green rice fields
+  - id: family-pool-villa
+    name: Family Pool Villa
+    sizeSqm: 140
+    bed: One king, one twin
+    maxGuests: 4
+    priceFrom: 6500000
+    features: [Two bedrooms, Private pool, Kitchenette]
+    image:
+      src: rooms/family-pool-villa.jpg
+      alt: Aerial view of a thatched-roof villa with a private pool, surrounded by garden
 
 dining:
-  name: Example Kitchen
-  cuisine: [Indonesian]
+  name: Demo Kitchen
+  cuisine: [Balinese, Indonesian]
   acceptsReservations: true
   hours:
     - days: [Mo, Tu, We, Th, Fr, Sa, Su]
@@ -85,23 +94,60 @@ dining:
   menu:
     - section: Mains
       items:
-        - name: Example dish
-          description: Placeholder menu item.
-          price: 120000
+        - name: Nasi campur Bali
+          price: 95000
+        - name: Sate lilit
+          description: Minced fish satay.
+          price: 85000
+        - name: Gado-gado
+          price: 75000
+          diet: [vegan]
+        - name: Bebek betutu
+          description: Slow-cooked duck. Order one day before.
+          price: 245000
+    - section: Dessert
+      items:
+        - name: Black rice pudding
+          price: 55000
           diet: [vegetarian]
 
 spa:
-  name: Example Spa
+  name: Demo Spa
   hours:
     - days: [Mo, Tu, We, Th, Fr, Sa, Su]
       opens: "09:00"
       closes: "20:00"
   treatments:
-    - name: Example massage
+    - name: Balinese massage
       durationMin: 60
       price: 450000
-      description: Placeholder treatment.
+      description: Traditional massage with coconut oil.
+    - name: Boreh scrub
+      durationMin: 45
+      price: 380000
+      description: Warm scrub of rice, ginger and cloves.
+    - name: Flower bath
+      durationMin: 30
+      price: TODO
+    - name: Four hands massage
+      durationMin: 90
+      price: 950000
+      description: Two therapists at the same time.
 
 faq:
-  - q: What time is check-in?
-    a: Check-in is from 14:00 and check-out is until 12:00.
+  - q: What time is check-in and check-out?
+    a: Check-in is from 14:00 and check-out is until 12:00. TODO confirm the Sunday exception (client wrote 15:00 on Sundays).
+  - q: Is breakfast included?
+    a: Yes, breakfast is included for all villas.
+  - q: Are children welcome?
+    a: Yes. Children under 6 stay free in the Family Pool Villa.
+  - q: Can I bring my pet?
+    a: No, we do not accept pets.
+  - q: How far is Ubud centre and the airport?
+    a: About 15 minutes by car to Ubud centre and about 1.5 hours to the airport.
+  - q: Do you arrange airport transfers?
+    a: Yes, on request, for IDR 450,000 each way.
+  - q: Can non-guests eat at Demo Kitchen?
+    a: Yes, non-guests are welcome. We recommend booking for dinner.
+  - q: How quickly do you reply to enquiries?
+    a: We reply to every enquiry within one working day.
