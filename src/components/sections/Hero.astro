@@ -1,12 +1,18 @@
 ---
 import type { ImageMetadata } from 'astro';
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import Button from '../ui/Button.astro';
 
 /**
- * Full-bleed photo with the page's only h1. The photo is the LCP element on
- * nearly every hospitality page, so it loads eagerly with high fetch priority.
- * Every other image in the kit is lazy.
+ * The page's only h1, with its photo. The photo is the LCP element on nearly
+ * every hospitality page, so it loads eagerly with high fetch priority, as
+ * AVIF with a WebP fallback, in widths that match phone screens (a 412px
+ * phone at 1.75x needs 721px, so 768 rather than 960). Every other image in
+ * the kit is lazy.
+ *
+ * - `overlay` (home): full-bleed photo, title and lead over a dark gradient.
+ * - `stacked` (inner pages): eyebrow and title beside the lead on the page
+ *   background, then a wide photo band underneath.
  */
 interface Props {
   image: ImageMetadata;
@@ -16,39 +22,61 @@ interface Props {
   lead?: string;
   primary?: { label: string; href: string; external?: boolean };
   secondary?: { label: string; href: string; external?: boolean };
+  layout?: 'overlay' | 'stacked';
+  /** Overlay height. Ignored by `stacked`. */
   size?: 'tall' | 'short';
 }
 
-const { image, alt, eyebrow, title, lead, primary, secondary, size = 'tall' } = Astro.props;
+const { image, alt, eyebrow, title, lead, primary, secondary, layout = 'overlay', size = 'tall' } = Astro.props;
+const imageProps = {
+  src: image,
+  alt,
+  formats: ['avif', 'webp'],
+  widths: [480, 768, 1080, 1440, 1920, 2400],
+  sizes: '100vw',
+  loading: 'eager' as const,
+  fetchpriority: 'high' as const,
+};
 ---
 
-<section
-  class:list={[
-    'relative isolate flex items-end overflow-hidden bg-dark text-ondark',
-    size === 'tall' ? 'min-h-[78svh]' : 'min-h-[46svh]',
-  ]}
->
-  <Image
-    src={image}
-    alt={alt}
-    widths={[640, 960, 1280, 1920, 2400]}
-    sizes="100vw"
-    loading="eager"
-    fetchpriority="high"
-    class="absolute inset-0 -z-10 h-full w-full object-cover"
-  />
-  <div class="absolute inset-0 -z-10 bg-linear-to-t from-black/75 via-black/30 to-black/5" aria-hidden="true"></div>
-  <div class="wrap w-full pb-14 pt-32 md:pb-20">
-    {eyebrow && <p class="eyebrow text-ondark">{eyebrow}</p>}
-    <h1 class="display mt-4 max-w-3xl text-4xl sm:text-5xl lg:text-6xl">{title}</h1>
-    {lead && <p class="mt-5 max-w-xl text-lg leading-relaxed text-ondark">{lead}</p>}
-    {
-      (primary || secondary) && (
-        <div class="mt-8 flex flex-wrap gap-3">
-          {primary && <Button {...primary} />}
-          {secondary && <Button {...secondary} variant="onDark" />}
+{
+  layout === 'stacked' ? (
+    <section>
+      <div class="wrap flex flex-wrap items-end gap-x-[clamp(2rem,6vw,6rem)] gap-y-5 pb-[clamp(2.25rem,4vw,3.5rem)] pt-[clamp(3rem,6vw,5.5rem)]">
+        <div class="flex-[1_1_min(100%,28.75rem)]">
+          {eyebrow && <p class="eyebrow mb-4 text-brand">{eyebrow}</p>}
+          <h1 class="display text-h1">{title}</h1>
         </div>
-      )
-    }
-  </div>
-</section>
+        {lead && <p class="lead max-w-[54ch] flex-[1_1_min(100%,27.5rem)]">{lead}</p>}
+        {(primary || secondary) && (
+          <div class="flex w-full flex-wrap gap-3">
+            {primary && <Button {...primary} />}
+            {secondary && <Button {...secondary} variant="secondary" />}
+          </div>
+        )}
+      </div>
+      <Picture {...imageProps} class="h-[clamp(13.75rem,28vw,26.25rem)] w-full bg-base-alt object-cover" />
+    </section>
+  ) : (
+    <section
+      class:list={[
+        'relative isolate flex items-end overflow-hidden bg-dark text-onaccent',
+        size === 'tall' ? 'min-h-[clamp(33.75rem,56vw,50rem)]' : 'min-h-[clamp(22rem,36vw,32rem)]',
+      ]}
+    >
+      <Picture {...imageProps} class="absolute inset-0 -z-10 h-full w-full object-cover" />
+      <div class="absolute inset-0 -z-10 bg-linear-to-t from-black/75 via-black/30 to-transparent" aria-hidden="true" />
+      <div class="wrap w-full pb-[clamp(2.25rem,5vw,4.5rem)] pt-32">
+        {eyebrow && <p class="eyebrow mb-4">{eyebrow}</p>}
+        <h1 class="display max-w-[14ch] text-hero">{title}</h1>
+        {lead && <p class="mt-[1.125rem] max-w-[40ch] text-[clamp(1.0625rem,1rem+0.3vw,1.25rem)] leading-normal">{lead}</p>}
+        {(primary || secondary) && (
+          <div class="mt-8 flex flex-wrap gap-3">
+            {primary && <Button {...primary} />}
+            {secondary && <Button {...secondary} variant="onDark" />}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}

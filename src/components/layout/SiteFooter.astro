@@ -10,53 +10,60 @@ const { business: biz } = facts;
 const { address: a } = biz;
 ---
 
-<footer class="bg-dark text-ondark">
-  <div class="wrap grid gap-10 py-14 md:grid-cols-3">
-    <div>
-      <p class="display text-2xl">{biz.name}</p>
-      <address class="mt-4 not-italic leading-relaxed text-ondark-muted">
-        {a.street}<br />
-        {a.locality}, {a.region} {a.postalCode}<br />
-        {new Intl.DisplayNames(['en'], { type: 'region' }).of(a.country)}
-      </address>
-      <a href={biz.mapUrl} class="mt-3 inline-block text-sm underline underline-offset-4">Open in Google Maps</a>
-    </div>
+<footer class="bg-dark text-[0.9375rem] text-ondark">
+  <div class="wrap pb-8 pt-[clamp(3.5rem,7vw,6rem)]">
+    <div class="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <p class="display text-[1.75rem]">{biz.name}</p>
+        <p class="mt-3 max-w-[32ch] text-ondark-muted">{biz.description}</p>
+      </div>
 
-    <div>
-      <h2 class="eyebrow text-ondark-muted">Contact</h2>
-      <ul class="mt-4 space-y-2">
-        <li><a href={telHref(biz.phone)} class="hover:underline">{biz.phone}</a></li>
-        {
-          biz.whatsapp && (
-            <li>
-              <a href={whatsappHref(biz.whatsapp)} class="hover:underline">
-                WhatsApp {biz.whatsapp}
-              </a>
-            </li>
-          )
-        }
-        <li><a href={`mailto:${biz.email}`} class="hover:underline">{biz.email}</a></li>
-      </ul>
+      <div>
+        <h2 class="eyebrow font-sans text-ondark-muted">Address</h2>
+        <address class="mt-3 not-italic">
+          {a.street}<br />
+          {a.locality}, {a.region} {a.postalCode}<br />
+          {new Intl.DisplayNames(['en'], { type: 'region' }).of(a.country)}
+        </address>
+        <a href={biz.mapUrl} class="mt-3 inline-flex min-h-11 items-center underline underline-offset-4">Open in Google Maps</a>
+      </div>
+
+      <div>
+        <h2 class="eyebrow font-sans text-ondark-muted">Phone and email</h2>
+        <ul class="mt-3 space-y-1">
+          <li><a href={telHref(biz.phone)} class="underline underline-offset-4">{biz.phone}</a></li>
+          {
+            biz.whatsapp && (
+              <li>
+                <a href={whatsappHref(biz.whatsapp)} class="underline underline-offset-4">
+                  WhatsApp {biz.whatsapp}
+                </a>
+              </li>
+            )
+          }
+          <li><a href={`mailto:${biz.email}`} class="break-all underline underline-offset-4">{biz.email}</a></li>
+        </ul>
+      </div>
+
       {
         (biz.checkIn || biz.checkOut) && (
-          <p class="mt-4 text-sm text-ondark-muted">
-            {biz.checkIn && `Check-in from ${biz.checkIn}`}
-            {biz.checkIn && biz.checkOut && ' · '}
-            {biz.checkOut && `check-out until ${biz.checkOut}`}
-          </p>
+          <div>
+            <h2 class="eyebrow font-sans text-ondark-muted">Check-in and check-out</h2>
+            {biz.checkIn && <p class="mt-3">Check-in from {biz.checkIn}</p>}
+            {biz.checkOut && <p>Check-out until {biz.checkOut}</p>}
+          </div>
         )
       }
     </div>
 
-    <div>
-      <h2 class="eyebrow text-ondark-muted">Explore</h2>
-      <ul class="mt-4 space-y-2">
-        {navItems.map((item) => <li><a href={item.path} class="hover:underline">{item.nav}</a></li>)}
-        {biz.sameAs.map((url) => <li><a href={url} class="hover:underline">{new URL(url).hostname.replace('www.', '')}</a></li>)}
-      </ul>
+    <div class="mt-14 flex flex-wrap justify-between gap-x-8 gap-y-4 border-t border-line-dark pt-6 text-sm text-ondark-muted">
+      <nav aria-label="Footer">
+        <ul class="flex flex-wrap gap-x-6 gap-y-2">
+          {navItems.map((item) => <li><a href={item.path} class="text-ondark hover:underline">{item.nav}</a></li>)}
+          {biz.sameAs.map((url) => <li><a href={url} class="text-ondark hover:underline">{new URL(url).hostname.replace('www.', '')}</a></li>)}
+        </ul>
+      </nav>
+      <p>© {new Date().getFullYear()} {biz.name}</p>
     </div>
-  </div>
-  <div class="border-t border-line-dark">
-    <p class="wrap py-6 text-xs text-ondark-muted">© {new Date().getFullYear()} {biz.name}</p>
   </div>
 </footer>

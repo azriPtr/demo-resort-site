@@ -7,6 +7,9 @@ import { facts, formatPrice } from '../../lib/facts';
  * The restaurant menu from facts.dining. Dishes, prices and diet labels are
  * facts; the heading and lead are page copy. The same data feeds the Menu
  * JSON-LD on the dining page.
+ *
+ * Heading with the diet legend beside it, the hours as a row of tiles, then
+ * the menu sections two to a row from 1100px.
  */
 interface Props {
   eyebrow?: string;
@@ -19,43 +22,57 @@ const dining = facts.dining;
 
 const dietLabel = { vegetarian: 'V', vegan: 'VG', 'gluten-free': 'GF' } as const;
 const dietTitle = { vegetarian: 'Vegetarian', vegan: 'Vegan', 'gluten-free': 'Gluten-free' } as const;
+const pill =
+  'inline-flex h-[1.375rem] min-w-[1.875rem] items-center justify-center rounded-full border border-brand px-1.5 text-xs font-semibold text-brand no-underline';
+const usedDiets = (Object.keys(dietLabel) as (keyof typeof dietLabel)[]).filter((d) =>
+  dining?.menu.some((s) => s.items.some((i) => i.diet.includes(d))),
+);
 ---
 
 {
   dining && (
     <section class="section-y">
-      <div class="wrap grid gap-12 lg:grid-cols-[1fr_2fr] lg:gap-20">
-        <div>
+      <div class="wrap">
+        <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
           <SectionHeading eyebrow={eyebrow} title={title} lead={lead} />
-          <div class="mt-8">
-            <HoursList hours={dining.hours} />
-          </div>
+          {usedDiets.length > 0 && (
+            <ul aria-label="Diet labels" class="flex flex-wrap gap-x-5 gap-y-2.5 text-sm">
+              {usedDiets.map((d) => (
+                <li class="flex items-center gap-2">
+                  <span aria-hidden="true" class={pill}>{dietLabel[d]}</span>
+                  {dietTitle[d]}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-        <div class="space-y-12">
+        <div class="mt-[clamp(2rem,4vw,3.5rem)]">
+          <HoursList hours={dining.hours} />
+        </div>
+        <div class="mt-[clamp(3rem,5vw,4rem)] grid grid-cols-[repeat(auto-fit,minmax(min(100%,32.5rem),1fr))] gap-x-[clamp(2.5rem,5vw,5rem)] gap-y-[clamp(3rem,5vw,4rem)]">
           {dining.menu.map((section) => (
             <div>
-              <h3 class="display border-b border-ink pb-2 text-2xl">{section.section}</h3>
-              <ul class="mt-2 divide-y divide-line">
+              <h3 class="eyebrow font-sans text-brand">{section.section}</h3>
+              <ul class="mt-1">
                 {section.items.map((item) => (
-                  <li class="flex justify-between gap-6 py-4">
-                    <div>
-                      <p class="font-medium">
-                        {item.name}
+                  <li class="border-b border-line py-[1.125rem]">
+                    <div class="flex items-baseline justify-between gap-4">
+                      <p class="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                        <span class="display text-[1.3125rem] leading-tight">{item.name}</span>
                         {item.diet.map((d) => (
-                          <abbr title={dietTitle[d]} class="ml-2 text-xs font-normal text-ink-muted no-underline">
+                          <abbr title={dietTitle[d]} class={pill}>
                             {dietLabel[d]}
                           </abbr>
                         ))}
                       </p>
-                      {item.description && <p class="mt-1 text-sm text-ink-muted">{item.description}</p>}
+                      <p class="shrink-0 font-semibold tabular-nums">{formatPrice(item.price)}</p>
                     </div>
-                    <p class="shrink-0 tabular-nums">{formatPrice(item.price)}</p>
+                    {item.description && <p class="mt-1 max-w-[52ch] text-ink-muted">{item.description}</p>}
                   </li>
                 ))}
               </ul>
             </div>
           ))}
-          <p class="text-xs text-ink-muted">V vegetarian · VG vegan · GF gluten-free</p>
         </div>
       </div>
     </section>

@@ -25,11 +25,11 @@ export default defineConfig({
     }),
   ],
   // Self-hosted at build time with metric-matched fallbacks, so text does not jump when the font loads.
-  // Static weights only. The variable files came to 423 KB across four preloads; these three are 66 KB.
+  // Static weights only, and only the ones the design uses: Newsreader 400, Instrument Sans 400 and 600.
   fonts: [
     {
       provider: fontProviders.fontsource(),
-      name: 'Fraunces',
+      name: 'Newsreader',
       cssVariable: '--font-display-face',
       weights: [400],
       styles: ['normal'],
@@ -38,9 +38,9 @@ export default defineConfig({
     },
     {
       provider: fontProviders.fontsource(),
-      name: 'Inter',
+      name: 'Instrument Sans',
       cssVariable: '--font-text-face',
-      weights: [400, 500],
+      weights: [400, 600],
       styles: ['normal'],
       subsets: ['latin'],
       fallbacks: ['system-ui', 'sans-serif'],

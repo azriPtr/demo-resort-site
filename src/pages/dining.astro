@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import MenuList from '../components/sections/MenuList.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { facts, telHref } from '../lib/facts';
+import { clientImage } from '../lib/images';
+import { pages } from '../lib/pages';
+import { restaurantNode } from '../lib/schema';
+
+const page = pages.dining;
+const dining = facts.dining!;
+const nonGuests = facts.faq.find((f) => f.q.startsWith('Can non-guests'))!.a;
+---
+
+<BaseLayout page={page} breadcrumbs={[{ name: page.nav, path: page.path }]} jsonLd={[restaurantNode()]}>
+  <Hero
+    layout="stacked"
+    image={clientImage('dining/restaurant.jpg')}
+    alt="Open-sided dining room with rattan chairs, wooden tables and woven pendant lamps, plants all around"
+    eyebrow="Restaurant"
+    title={dining.name}
+    lead={`${dining.cuisine.join(' and ')} food at ${facts.business.name}. ${nonGuests}`}
+  />
+
+  <MenuList eyebrow="Menu" title={`What we cook at ${dining.name}`} lead="Prices are per dish." />
+
+  <CtaBand
+    title={`Questions about ${dining.name}?`}
+    text={`Call us on ${facts.business.phone}.`}
+    cta={{ label: 'Call us', href: telHref(facts.business.phone) }}
+  />
+</BaseLayout>
