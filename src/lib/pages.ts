@@ -1,4 +1,4 @@
-import { facts, whatsappHref } from './facts';
+import { facts, formatPrice } from './facts';
 
 /**
  * Every public page, with its search title and meta description.
@@ -19,12 +19,51 @@ export interface PageMeta {
   nav?: string;
 }
 
+// Numbers, prices and hours in titles and descriptions come from facts, so a price change updates search snippets too.
+const { business: biz, rooms, dining, spa } = facts;
+const room = (id: string) => rooms.find((r) => r.id === id)!;
+const riceField = room('rice-field-villa');
+const familyPool = room('family-pool-villa');
+const fromPrice = formatPrice(Math.min(...rooms.map((r) => r.priceFrom)));
+const treatmentNames = spa!.treatments
+  .map((t, i) => (i === 0 ? t.name : t.name.toLowerCase()))
+  .join(', ')
+  .replace(/, ([^,]*)$/, ' and $1');
+const hoursText = (h: { opens: string; closes: string }[]) => `${h[0].opens} to ${h[0].closes}`;
+
 export const pages = {
+  // Query intent: "rice field view villa Ubud".
   home: {
     path: '/',
-    title: facts.business.name,
-    description: facts.business.description,
+    title: 'Small resort in Ubud with Rice Field Villas',
+    description: `A small resort in Ubud, Bali. The ${riceField.name} has a ${riceField.features[0].toLowerCase()} and a ${riceField.features[1].toLowerCase()}. Breakfast included.`,
     nav: 'Home',
+  },
+  // Query intents: "villa with private pool Ubud", "family villa Ubud".
+  rooms: {
+    path: '/villas',
+    title: 'Family villa with private pool in Ubud',
+    description: `${rooms.length} villa types in Ubud, from ${fromPrice} a night with breakfast. The ${familyPool.name} sleeps ${familyPool.maxGuests}, with ${familyPool.features[0].toLowerCase()} and a ${familyPool.features[1].toLowerCase()}.`,
+    nav: 'Villas',
+  },
+  dining: {
+    path: '/dining',
+    title: `${dining!.name}, ${dining!.cuisine[0]} food in Ubud`,
+    description: `${dining!.name} serves ${dining!.cuisine.join(' and ')} food daily, ${hoursText(dining!.hours)}, and non-guests are welcome. The menu with prices.`,
+    nav: 'Restaurant',
+  },
+  // Query intent: "Balinese massage Ubud".
+  spa: {
+    path: '/spa',
+    title: `Balinese massage in Ubud at ${spa!.name}`,
+    description: `${treatmentNames} at ${spa!.name} in Ubud. Open daily, ${hoursText(spa!.hours)}. Durations and prices.`,
+    nav: 'Spa',
+  },
+  contact: {
+    path: '/contact',
+    title: 'Send an enquiry',
+    description: `Send ${biz.name} your dates and villa. We reply to every enquiry within one working day. Address, phone, email and directions.`,
+    nav: 'Contact',
   },
 } satisfies Record<string, PageMeta>;
 
@@ -49,7 +88,5 @@ export const internalPages = {
 
 export const navItems = Object.values(pages as Record<string, PageMeta>).filter((p) => p.nav);
 
-/** Header call to action: WhatsApp when the client has a number in facts, email otherwise. */
-export const headerCta = facts.business.whatsapp
-  ? { label: 'Enquire on WhatsApp', href: whatsappHref(facts.business.whatsapp), external: true }
-  : { label: 'Email us', href: `mailto:${facts.business.email}`, external: false };
+/** Header call to action: the enquiry form. The client asked for no WhatsApp (client/brief.md, Goal of the site). */
+export const headerCta = { label: 'Send an enquiry', href: `${pages.contact.path}#enquire`, external: false };
